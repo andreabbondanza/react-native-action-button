@@ -17,10 +17,49 @@ import {
   DEFAULT_ACTIVE_OPACITY
 } from "./shared";
 
-const ActionButton = props => {
-  const [, setResetToken] = useState(props.resetToken);
-  const [active, setActive] = useState(props.active);
-  const anim = useRef(new Animated.Value(props.active ? 1 : 0));
+const ActionButton = props =>
+{
+  const {
+    resetToken = null,
+    active: activeProp = false,
+    bgColor = "transparent",
+    bgOpacity = 1,
+    buttonColor = "rgba(0,0,0,1)",
+    buttonTextStyle = {},
+    buttonText = "+",
+    spacing = 20,
+    outRangeScale = 1,
+    autoInactive = true,
+    onPress = () => {},
+    onPressIn = () => {},
+    onPressOut = () => {},
+    onReset,                // può restare undefined
+    backdrop = false,
+    degrees = 45,
+    position = "right",
+    offsetX = 30,
+    offsetY = 30,
+    size = 56,
+    verticalOrientation = "up",
+    backgroundTappable = false,
+    useNativeFeedback = true,
+    activeOpacity = DEFAULT_ACTIVE_OPACITY,
+    fixNativeFeedbackRadius = false,
+    nativeFeedbackRippleColor = "rgba(255,255,255,0.75)",
+    testID,
+    accessibilityLabel,
+    accessible,
+    elevation = 0,
+    zIndex = 0,
+    btnOutRange,           // opzionale
+    btnOutRangeTxt,        // opzionale
+    style,
+    children,
+    ...rest
+  } = inProps;
+  const [, setResetToken] = useState(resetToken);
+  const [active, setActive] = useState(active);
+  const anim = useRef(new Animated.Value(active ? 1 : 0));
   const timeout = useRef(null);
   const mounted = useRef(false);
 
@@ -34,33 +73,33 @@ const ActionButton = props => {
   }, []);
 
   useEffect(() => {
-    if (props.active) {
+    if (active) {
       Animated.spring(anim.current, { toValue: 1, useNativeDriver:true }).start();
       setActive(true);
-      setResetToken(props.resetToken);
+      setResetToken(resetToken);
     } else {
-      props.onReset && props.onReset();
+      onReset && onReset();
 
       Animated.spring(anim.current, { toValue: 0, useNativeDriver:true }).start();
       timeout.current = setTimeout(() => {
         setActive(false);
-        setResetToken(props.resetToken);
+        setResetToken(resetToken);
       }, 250);
     }
-  }, [props.resetToken, props.active]);
+  }, [resetToken, active]);
 
   //////////////////////
   // STYLESHEET GETTERS
   //////////////////////
 
   const getOrientation = () => {
-    return { alignItems: alignItemsMap[props.position] };
+    return { alignItems: alignItemsMap[position] };
   };
 
   const getOffsetXY = () => {
     return {
-      // paddingHorizontal: props.offsetX,
-      paddingVertical: props.offsetY
+      // paddingHorizontal: offsetX,
+      paddingVertical: offsetY
     };
   };
 
@@ -68,33 +107,33 @@ const ActionButton = props => {
     return [
       styles.overlay,
       {
-        elevation: props.elevation,
-        zIndex: props.zIndex,
+        elevation: elevation,
+        zIndex: zIndex,
         justifyContent:
-          props.verticalOrientation === "up" ? "flex-end" : "flex-start"
+          verticalOrientation === "up" ? "flex-end" : "flex-start"
       }
     ];
   };
 
   const _renderMainButton = () =>
   {
-    console.log("props.buttonColor--->>>>>", props.buttonColor);
-    console.log("props.btnOutRange--->>>>>", props.btnOutRange);
-    console.log("props.outRangeScale--->>>>>", props.outRangeScale);
-    console.log("props.degrees--->>>>>", props.degrees);
+    console.log("buttonColor--->>>>>", buttonColor);
+    console.log("btnOutRange--->>>>>", btnOutRange);
+    console.log("outRangeScale--->>>>>", outRangeScale);
+    console.log("degrees--->>>>>", degrees);
     console.log("anim.current--->>>>>", anim.current);
     const animatedViewStyle = {
       transform: [
         {
           scale: anim.current.interpolate({
             inputRange: [0, 1],
-            outputRange: [1, props.outRangeScale !== undefined ? props.outRangeScale : 1]
+            outputRange: [1, outRangeScale]
           })
         },
         {
           rotate: anim.current.interpolate({
             inputRange: [0, 1],
-            outputRange: ["0deg", props.degrees !== undefined ? props.degrees + "deg" : "0deg"]
+            outputRange: ["0deg", degrees !== undefined ? degrees + "deg" : "0deg"]
           })
         }
       ]
@@ -103,56 +142,56 @@ const ActionButton = props => {
     const wrapperStyle = {
       backgroundColor: anim.current.interpolate({
         inputRange: [0, 1],
-        outputRange: [props.buttonColor, props.btnOutRange !== undefined ? props.btnOutRange : props.buttonColor]
+        outputRange: [buttonColor, btnOutRange !== undefined ? btnOutRange : buttonColor]
       }),
-      width: props.size,
-      height: props.size,
-      borderRadius: props.size / 2
+      width: size,
+      height: size,
+      borderRadius: size / 2
     };
 
     const buttonStyle = {
-      width: props.size,
-      height: props.size,
-      borderRadius: props.size / 2,
+      width: size,
+      height: size,
+      borderRadius: size / 2,
       alignItems: "center",
       justifyContent: "center"
     };
 
-    const Touchable = getTouchableComponent(props.useNativeFeedback);
+    const Touchable = getTouchableComponent(useNativeFeedback);
     const parentStyle =
-      isAndroid && props.fixNativeFeedbackRadius
+      isAndroid && fixNativeFeedbackRadius
         ? {
-            right: props.offsetX,
-            zIndex: props.zIndex,
-            borderRadius: props.size / 2,
-            width: props.size
+            right: offsetX,
+            zIndex: zIndex,
+            borderRadius: size / 2,
+            width: size
           }
-        : { marginHorizontal: props.offsetX, zIndex: props.zIndex };
+        : { marginHorizontal: offsetX, zIndex: zIndex };
 
     return (
       <View
         style={[
           parentStyle,
-          !props.hideShadow && shadowStyle,
-          !props.hideShadow && props.shadowStyle
+          !hideShadow && shadowStyle,
+          !hideShadow && shadowStyle
         ]}
       >
         <Touchable
-          testID={props.testID}
-          accessible={props.accessible}
-          accessibilityLabel={props.accessibilityLabel}
+          testID={testID}
+          accessible={accessible}
+          accessibilityLabel={accessibilityLabel}
           background={touchableBackground(
-            props.nativeFeedbackRippleColor,
-            props.fixNativeFeedbackRadius
+            nativeFeedbackRippleColor,
+            fixNativeFeedbackRadius
           )}
-          activeOpacity={props.activeOpacity}
-          onLongPress={props.onLongPress}
+          activeOpacity={activeOpacity}
+          onLongPress={onLongPress}
           onPress={() => {
-            props.onPress();
-            if (props.children) animateButton();
+            onPress();
+            if (children) animateButton();
           }}
-          onPressIn={props.onPressIn}
-          onPressOut={props.onPressOut}
+          onPressIn={onPressIn}
+          onPressOut={onPressOut}
         >
           <Animated.View style={wrapperStyle}>
             <Animated.View style={[buttonStyle, animatedViewStyle]}>
@@ -220,8 +259,8 @@ const ActionButton = props => {
       alignSelf: "stretch",
       // backgroundColor: 'purple',
       justifyContent: verticalOrientation === "up" ? "flex-end" : "flex-start",
-      paddingTop: props.verticalOrientation === "down" ? props.spacing : 0,
-      zIndex: props.zIndex
+      paddingTop: verticalOrientation === "down" ? spacing : 0,
+      zIndex: zIndex
     };
 
     return (
@@ -232,13 +271,13 @@ const ActionButton = props => {
             anim={anim.current}
             {...props}
             {...ActionButton.props}
-            parentSize={props.size}
-            btnColor={props.btnOutRange}
+            parentSize={size}
+            btnColor={btnOutRange}
             onPress={() => {
-              if (props.autoInactive) {
+              if (autoInactive) {
                 timeout.current = setTimeout(reset, 200);
               }
-              ActionButton.props.onPress();
+              ActionButton.onPress();
             }}
           />
         ))}
@@ -273,7 +312,7 @@ const ActionButton = props => {
   };
 
   const reset = (animate = true) => {
-    if (props.onReset) props.onReset();
+    if (onReset) onReset();
 
     if (animate) {
       Animated.spring(anim.current, {
@@ -292,34 +331,34 @@ const ActionButton = props => {
   };
 
   return (
-    <View pointerEvents="box-none" style={[getOverlayStyles(), props.style]}>
+    <View pointerEvents="box-none" style={[getOverlayStyles(), style]}>
       <Animated.View
         pointerEvents="none"
         style={[
           getOverlayStyles(),
           {
-            backgroundColor: props.bgColor,
+            backgroundColor: bgColor,
             opacity: anim.current.interpolate({
               inputRange: [0, 1],
-              outputRange: [0, props.bgOpacity !== undefined ? props.bgOpacity : 1]
+              outputRange: [0, bgOpacity]
             })
           }
         ]}
       >
-        {props.backdrop}
+        {backdrop}
       </Animated.View>
       <View
         pointerEvents="box-none"
         style={[getOverlayStyles(), getOrientation(), getOffsetXY()]}
       >
-        {active && !props.backgroundTappable && _renderTappableBackground()}
+        {active && !backgroundTappable && _renderTappableBackground()}
 
-        {props.verticalOrientation === "up" &&
-          props.children &&
+        {verticalOrientation === "up" &&
+          children &&
           _renderActions()}
         {_renderMainButton()}
-        {props.verticalOrientation === "down" &&
-          props.children &&
+        {verticalOrientation === "down" &&
+          children &&
           _renderActions()}
       </View>
     </View>
