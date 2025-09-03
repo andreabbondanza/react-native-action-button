@@ -76,19 +76,25 @@ const ActionButton = props => {
     ];
   };
 
-  const _renderMainButton = () => {
+  const _renderMainButton = () =>
+  {
+    console.log("props.buttonColor--->>>>>", props.buttonColor);
+    console.log("props.btnOutRange--->>>>>", props.btnOutRange);
+    console.log("props.outRangeScale--->>>>>", props.outRangeScale);
+    console.log("props.degrees--->>>>>", props.degrees);
+    console.log("anim.current--->>>>>", anim.current);
     const animatedViewStyle = {
       transform: [
         {
           scale: anim.current.interpolate({
             inputRange: [0, 1],
-            outputRange: [1, props.outRangeScale]
+            outputRange: [1, props.outRangeScale !== undefined ? props.outRangeScale : 1]
           })
         },
         {
           rotate: anim.current.interpolate({
             inputRange: [0, 1],
-            outputRange: ["0deg", props.degrees + "deg"]
+            outputRange: ["0deg", props.degrees !== undefined ? props.degrees + "deg" : "0deg"]
           })
         }
       ]
@@ -97,7 +103,7 @@ const ActionButton = props => {
     const wrapperStyle = {
       backgroundColor: anim.current.interpolate({
         inputRange: [0, 1],
-        outputRange: [props.buttonColor, props.btnOutRange || props.buttonColor]
+        outputRange: [props.buttonColor, props.btnOutRange !== undefined ? props.btnOutRange : props.buttonColor]
       }),
       width: props.size,
       height: props.size,
@@ -175,7 +181,11 @@ const ActionButton = props => {
     }
 
     const textColor = buttonTextStyle.color || "rgba(255,255,255,1)";
-
+    console.log("textColor--->>>>>", textColor);
+    console.log("buttonTextStyle--->>>>>", buttonTextStyle);
+    console.log("btnOutRangeTxt--->>>>>", btnOutRangeTxt);
+    console.log("buttonText--->>>>>", buttonText);
+    console.log("anim.current--->>>>>", anim.current);
     return (
       <Animated.Text
         style={[
@@ -184,7 +194,7 @@ const ActionButton = props => {
           {
             color: anim.current.interpolate({
               inputRange: [0, 1],
-              outputRange: [textColor, btnOutRangeTxt || textColor]
+              outputRange: [textColor, btnOutRangeTxt !== undefined ? btnOutRangeTxt : textColor]
             })
           }
         ]}
@@ -291,7 +301,7 @@ const ActionButton = props => {
             backgroundColor: props.bgColor,
             opacity: anim.current.interpolate({
               inputRange: [0, 1],
-              outputRange: [0, props.bgOpacity]
+              outputRange: [0, props.bgOpacity !== undefined ? props.bgOpacity : 1]
             })
           }
         ]}
