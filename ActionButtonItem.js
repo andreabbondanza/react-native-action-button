@@ -1,3 +1,4 @@
+
 import React, { Component } from "react";
 import PropTypes from "prop-types";
 import {
@@ -55,7 +56,7 @@ export default class ActionButtonItem extends Component
   
 
   render() {
-     const { active = true, spaceBetween = 15, useNativeFeedback = true, activeOpacity = DEFAULT_ACTIVE_OPACITY, fixNativeFeedbackRadius = false, nativeFeedbackRippleColor = "rgba(255,255,255,0.75)", numberOfLines = 1, } = this.props;
+     const { active = true, spaceBetween = 15, useNativeFeedback = true, activeOpacity = DEFAULT_ACTIVE_OPACITY, fixNativeFeedbackRadius = false, nativeFeedbackRippleColor = "rgba(255,255,255,0.75)", numberOfLines = 1, position = "right", size = 56, verticalOrientation = "up", hideShadow = false, spacing = 20} = this.props;
 
 
     if (!this.props.active) return null;
@@ -67,13 +68,16 @@ export default class ActionButtonItem extends Component
       // backgroundColor: this.props.buttonColor,
       opacity: this.props.anim,
       transform: [
-        {
-          translateY: this.props.anim.interpolate({
-            inputRange: [0, 1],
-            outputRange: [verticalOrientation === "down" ? -40 : 40, 0]
-          })
-        }
+  {
+    translateY: this.props.anim.interpolate({
+      inputRange: [0, 1],
+      outputRange: [
+        verticalOrientation === "down" ? -(size + spacing) : (size + spacing),
+        0
       ]
+    })
+  }
+]
     };
 
     const buttonStyle = {
@@ -171,7 +175,10 @@ export default class ActionButtonItem extends Component
       : (
         <Text
           allowFontScaling={false}
-          style={[styles.text, this.props.textStyle]}
+          style={ {
+            padding: this.props.textStyle?.padding || 0,
+            margin: this.props.textStyle?.margin || 0,
+          }}
           numberOfLines={numberOfLines}
         >
           {this.props.title}
@@ -189,7 +196,7 @@ export default class ActionButtonItem extends Component
         activeOpacity={this.props.activeOpacity || DEFAULT_ACTIVE_OPACITY}
         onPress={this.props.onPress}
       >
-        <View style={textStyles}>
+        <View style={ [ textStyles, {marginRight: 80, marginTop: 15} ] }>
           {title}
         </View>
       </TextTouchable>
