@@ -26,7 +26,9 @@ const TextTouchable = isAndroid
   ? TouchableNativeFeedback
   : TouchableWithoutFeedback;
 
-export default class ActionButtonItem extends Component {
+export default class ActionButtonItem extends Component
+{
+
   static get defaultProps() {
     return {
       active: true,
@@ -49,15 +51,12 @@ export default class ActionButtonItem extends Component {
       numberOfLines: PropTypes.number,
     };
   }
+  
+  
 
   render() {
-    const {
-      size,
-      position,
-      verticalOrientation,
-      hideShadow,
-      spacing
-    } = this.props;
+     const { active = true, spaceBetween = 15, useNativeFeedback = true, activeOpacity = DEFAULT_ACTIVE_OPACITY, fixNativeFeedbackRadius = false, nativeFeedbackRippleColor = "rgba(255,255,255,0.75)", numberOfLines = 1, } = this.props;
+
 
     if (!this.props.active) return null;
 
