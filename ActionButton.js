@@ -55,8 +55,10 @@ const ActionButton = props =>
     btnOutRangeTxt,        // opzionale
     style,
     children,
+    hideShadow = false,
+    onLongPress = () => {},
     ...rest
-  } = inProps;
+  } = props;
   const [, setResetToken] = useState(resetToken);
   const [active, setActive] = useState(active);
   const anim = useRef(new Animated.Value(active ? 1 : 0));
@@ -98,8 +100,10 @@ const ActionButton = props =>
 
   const getOffsetXY = () => {
     return {
-      // paddingHorizontal: offsetX,
-      paddingVertical: offsetY
+      paddingHorizontal: offsetX,
+      ...(verticalOrientation === 'up'
+          ? { paddingBottom: offsetY }
+          : { paddingTop: offsetY }),
     };
   };
 
@@ -258,7 +262,7 @@ const ActionButton = props =>
       flex: 1,
       alignSelf: "stretch",
       // backgroundColor: 'purple',
-      justifyContent: verticalOrientation === "up" ? "flex-end" : "flex-start",
+      justifyContent: verticalOrientation === "up" ? "flex-start" : "flex-end",
       paddingTop: verticalOrientation === "down" ? spacing : 0,
       zIndex: zIndex
     };
@@ -277,7 +281,7 @@ const ActionButton = props =>
               if (autoInactive) {
                 timeout.current = setTimeout(reset, 200);
               }
-              ActionButton.onPress();
+              ActionButton.props.onPress();
             }}
           />
         ))}
